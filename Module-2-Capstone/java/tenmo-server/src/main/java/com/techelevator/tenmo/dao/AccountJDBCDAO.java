@@ -20,8 +20,8 @@ public class AccountJDBCDAO implements AccountDAO {
 	@Override
 	public void createAccount(Account newAccount) {
 		String sqlNewAccount ="INSERT INTO accounts "
-				  + "(account_id, user_id, balance) "
-				  +	"VALUES(?,?, ?)";
+				  			 + "(account_id, user_id, balance) "
+				             + "VALUES(?,?, ?)";
 		
 		newAccount.setAccount_id(getNextAccountId());
 
@@ -51,7 +51,7 @@ public class AccountJDBCDAO implements AccountDAO {
 		List<Account> returnList = new ArrayList<Account>();
 		
 		String sqlListAccounts = "SELECT * " 
-								+ "FROM accounts";
+							   + "FROM accounts";
 								
 		
 		SqlRowSet accountQuery = jdbcTemplate.queryForRowSet(sqlListAccounts);

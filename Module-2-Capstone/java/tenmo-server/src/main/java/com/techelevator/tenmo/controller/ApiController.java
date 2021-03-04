@@ -26,7 +26,7 @@ import com.techelevator.tenmo.model.Users;
 /*******************************************************************************************************
  * This is where you code any API controllers you may create
 ********************************************************************************************************/
-@RestController
+//@RestController -- do we need this? this seemed to keep the server from starting this morning
 @RequestMapping("/users")
 @PreAuthorize("isAuthenticated()")
 
