@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -39,10 +40,10 @@ public class ApiController {
 	private UserDAO userDAO;
 	private JdbcTemplate jdbcTemplate;
 	
-	public ApiController() {//is this correct??
-		this.accountDAO = new AccountJDBCDAO(jdbcTemplate);
-		this.transferDAO = new TransferJDBCDAO(jdbcTemplate);
-		this.userDAO = new UserSqlDAO(jdbcTemplate);
+	public ApiController(AccountDAO accountDAO, TransferDAO transferDAO, UserDAO userDAO ) {
+		this.accountDAO = accountDAO;
+		this.transferDAO = transferDAO;
+		this.userDAO = userDAO;
 		
 	}
 
@@ -64,20 +65,10 @@ public class ApiController {
 	   return userDAO.findIdByUsername(username);
 	}
 	
-	@RequestMapping( path = " ", method = RequestMethod.POST) 
-	@ResponseStatus(value = HttpStatus.CREATED)
-	public boolean create(@RequestBody User user) {
-//			throws UserAlreadyExistsException {
-		return userDAO.create(user.getUsername(), user.getPassword());
-	} 
-	
-//	}
-	
-	// Come back to this - needs Principal User Info??
 	@RequestMapping( path = "/accounts/{id} ", method = RequestMethod.GET)
-	public double getBalanaceByUserId(@PathVariable int id) {
-		
-		return accountDAO.getBalanceByUserId(id);
+	public double getBalanaceByUserId(@PathVariable Principal userInfo) {
+		long user_id = userDAO.findIdByUsername(userInfo.getName());
+		return accountDAO.getBalanceByUserId((int) user_id);
 	}
 	
 	@RequestMapping( path = "/accounts ", method = RequestMethod.POST) 
