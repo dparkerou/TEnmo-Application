@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,8 @@ import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.dao.TransferJDBCDAO;
 import com.techelevator.tenmo.dao.UserDAO;
 import com.techelevator.tenmo.dao.UserSqlDAO;
+import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.Users;
 
@@ -63,7 +66,55 @@ public class ApiController {
 	
 	@RequestMapping( path = " ", method = RequestMethod.POST) 
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public boolean create(User user) {
+	public boolean create(@RequestBody User user) {
+//			throws UserAlreadyExistsException {
 		return userDAO.create(user.getUsername(), user.getPassword());
+	} 
+	
+//	}
+	
+	// Come back to this - needs Principal User Info??
+	@RequestMapping( path = "/accounts/{id} ", method = RequestMethod.GET)
+	public double getBalanaceByUserId(@PathVariable int id) {
+		
+		return accountDAO.getBalanceByUserId(id);
 	}
+	
+	@RequestMapping( path = "/accounts ", method = RequestMethod.POST) 
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public void updateAccountBalance(@RequestBody Account updatedAccount) {
+		accountDAO.updateAccount(updatedAccount);
+	}
+	
+	@RequestMapping ( path = "/transfers ", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public void createTransfer(@RequestBody Transfer newTransfer) {
+		transferDAO.createTransfer(newTransfer);
+	}
+	
+	// Possibly could refactor to combine the next two methods
+	@RequestMapping (path = "/transfers ", method = RequestMethod.GET) 
+	public List<Transfer> listTransfersByAccount(@RequestParam int account_from) {
+		return transferDAO.listTransfersByAccount(account_from);
+	}
+	
+	@RequestMapping (path = "/transfers/{id} ", method = RequestMethod.GET) 
+	public List<Transfer> listTransfersById(@PathVariable Long transfer_id) {
+		return transferDAO.listTransfersById(transfer_id);
+	}
+	
+	@RequestMapping (path = "/transfers/{id} ", method = RequestMethod.POST)
+	public void updateTransferStatus (@PathVariable Long transfer_id, @RequestParam int transfer_status_id) {
+		transferDAO.updateTransferStatus(transfer_id, transfer_status_id);
+	}
+	
+	
+	
+		 
 }
+
+	
+	
+	
+	
+	
