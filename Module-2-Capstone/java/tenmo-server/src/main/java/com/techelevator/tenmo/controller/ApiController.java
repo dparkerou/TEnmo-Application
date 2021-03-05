@@ -32,7 +32,7 @@ import com.techelevator.tenmo.model.User;
 ********************************************************************************************************/
 @RestController 
 //@RequestMapping("//localhost:8080")
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 
 public class ApiController {
 	private AccountDAO accountDAO;
@@ -45,7 +45,7 @@ public class ApiController {
 		this.userDAO = userDAO;
 		
 	}
-	//come back -- this works
+	
 	@RequestMapping(path = "/users", method = RequestMethod.GET)
     public List<User> list() {
         return userDAO.findAll();
@@ -58,9 +58,10 @@ public class ApiController {
 	    return userDAO.findByUsername(username);
 	}
 	
-	@RequestMapping( path = "/accounts/{id}", method = RequestMethod.GET)
-	public double getBalanaceByUserId(@PathVariable long id) {
-		return accountDAO.getBalanceByUserId(id);
+	@RequestMapping( path = "/accounts/balance", method = RequestMethod.GET)
+	public double getBalanaceByUserId(Principal userInfo) {
+		long userId = userDAO.findIdByUsername(userInfo.getName());
+		return accountDAO.getBalanceByUserId(userId);  
 	}
 	
 	@RequestMapping( path = "/accounts", method = RequestMethod.GET)
@@ -68,11 +69,12 @@ public class ApiController {
 		return accountDAO.listAccounts();
 	}
 	
-	
-	@RequestMapping ( path = "/transfers/{from_id}/{to_id}/{amount}", method = RequestMethod.POST)
+	//Come back here and maybe re-work
+	@RequestMapping ( path = "/transfers/send", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void createTransfer(@RequestBody@PathVariable int from_id, @PathVariable int to_id, @PathVariable double amount) {
-		transferDAO.sendTransfer(from_id, to_id, amount);
+	public void createTransfer(@RequestBody Transfer newTransfer, Principal userInfo) {
+		int userId = userDAO.findIdByUsername(userInfo.getName());
+		transferDAO.sendTransfer(userId, newTransfer.getAccount_to(), newTransfer.getAmount());
 		
 	}
 	

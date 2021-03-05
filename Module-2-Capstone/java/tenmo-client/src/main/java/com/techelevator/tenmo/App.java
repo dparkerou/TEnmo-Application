@@ -1,6 +1,10 @@
 package com.techelevator.tenmo;
 
+import java.util.Map;
+import java.util.Scanner;
+
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.User;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
@@ -26,7 +30,8 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
     private ConsoleService console;
     private AuthenticationService authenticationService;
-    private TenmoApplicationServices newService = new TenmoApplicationServices(API_BASE_URL);
+    private TenmoApplicationServices newService = new TenmoApplicationServices();
+    
     public static void main(String[] args) {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
     	app.run();
@@ -67,10 +72,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			}
 		}
 	}
-
+	private static Scanner userInput = new Scanner(System.in);
 	private void viewCurrentBalance() {
-		
-		System.out.println(newService.getBalance(1L));
+										
+	System.out.println("Your current balance is: " + newService.getBalance(currentUser.getToken()));
 		
 	}
 
@@ -86,9 +91,25 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		//need to finish : System.out.println(newService.sendBucks(5, 4, 500));
+	System.out.println("Please enter the id of the user you'd like to send money to: ");	
 	
+	Map<Integer, String> userList = newService.userList(currentUser.getToken());
+	
+	System.out.println(userList.get());
+	
+	int userChoice = Integer.parseInt(userInput.nextLine().trim());
+	console.getUserInput(prompt)
+//	if (userChoice != 0){
+//		userChoice
+//	}
 	}
+	//Choose form a list of users to send TE Bucks to
+	//newService.sendBucks(currentUser.getUser().getId(), 2, 40, currentUser.getToken());
+	 
+	//Print a line that has the UserIDs of the from and to users and amount of TE Bucks
+	
+	//Print "approved"
+	//}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
