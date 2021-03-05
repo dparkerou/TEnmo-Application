@@ -18,4 +18,12 @@ account_from, account_to, amount
 FROM transfers
 WHERE account_from = 1 or account_to = 1;
 
+SELECT *
+From transfers
+inner join transfer_statuses
+on transfer_statuses.transfer_status_id = transfers.transfer_status_id
+inner join transfer_types
+on transfer_types.transfer_type_id = transfers.transfer_type_id
+where account_from = 1 or account_to = 1;
+
 rollback;

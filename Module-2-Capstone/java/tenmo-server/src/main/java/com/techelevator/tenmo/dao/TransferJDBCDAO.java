@@ -7,34 +7,44 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+@Component
 //might want to add some defensive programming here 
 public class TransferJDBCDAO implements TransferDAO {
 	
 	private JdbcTemplate jdbcTemplate;
 	
-	public TransferJDBCDAO(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = new JdbcTemplate();
+	public TransferJDBCDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	@Override
-	public void createTransfer(Transfer newTransfer) {
+	public void createTransfer(int account_from, int account_to, double amount) {
+		Transfer newTransfer = new Transfer();
 		String sqlNewTransfer ="INSERT INTO transfers "
-							  + "(transfer_id, transfer_type_id, transfer_status_id) "
+							  + "(transfer_id, transfer_type_id, transfer_status_id, "
 							  + "account_from, account_to, amount) "	
-							  +	"VALUES(?,?, ?, ?, ?, ?)";
-		
+							  +	"VALUES(?, ?, ?, ?, ?, ?) ";
+		//do the same thing with request type 1 for request
 		newTransfer.setTransfer_id(getNextTransferId());
+		newTransfer.setTransfer_type_id(2);
+		newTransfer.setTransfer_status_id(2);
+		newTransfer.setAccount_from(account_from);
+		newTransfer.setAccount_to(account_to);
+		newTransfer.setAmount(amount);
 		
 		jdbcTemplate.update(sqlNewTransfer, newTransfer.getTransfer_id(), newTransfer.getTransfer_type_id(), newTransfer.getTransfer_status_id(),
 								newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
-		
-	}
 
+	}
+	
 	@Override
 	public List<Transfer> listTransfersByAccount(int account_from) {
 		List<Transfer> returnList = new ArrayList<Transfer>();
+
 		
 		String sqlListTransfers = "SELECT * " 
 								+ "FROM transfers "
@@ -44,7 +54,8 @@ public class TransferJDBCDAO implements TransferDAO {
 								+ "ON transfer_types.transfer_type_id = transfers.transfer_type_id "
 								+ "WHERE account_from = ? or account_to = ? ";
 		
-		SqlRowSet transferQuery = jdbcTemplate.queryForRowSet(sqlListTransfers + account_from + account_from);
+		
+		SqlRowSet transferQuery = jdbcTemplate.queryForRowSet(sqlListTransfers, account_from, account_from);
 		
 		while(transferQuery.next()) {
 			Transfer theTransfer =  mapRowToTransfer(transferQuery);
@@ -63,10 +74,10 @@ public class TransferJDBCDAO implements TransferDAO {
 								+ "INNER JOIN transfer_statuses "
 								+ "ON transfer_statuses.transfer_status_id = transfers.transfer_status_id "
 								+ "INNER JOIN transfer_types "
-								+ "ON transfer_types.transfer_type_id = transfers.transfer_type_id "
-								+ "WHERE transfer_id = ? ";
+							 	+ "ON transfer_types.transfer_type_id = transfers.transfer_type_id "
+								+ "WHERE transfers.transfer_id = ? ";
 		
-		SqlRowSet transferQuery = jdbcTemplate.queryForRowSet(sqlListTransfers + transfer_id);
+		SqlRowSet transferQuery = jdbcTemplate.queryForRowSet(sqlListTransfers, transfer_id);
 		
 		while(transferQuery.next()) {
 			Transfer theTransfer =  mapRowToTransfer(transferQuery);
@@ -93,7 +104,7 @@ public class TransferJDBCDAO implements TransferDAO {
 		
 		theTransfer.setTransfer_type_id(results.getInt("transfer_type_id"));
 		
-		theTransfer.setTransfer_status_id(results.getInt("status_id"));
+		theTransfer.setTransfer_status_id(results.getInt("transfer_status_id"));
 		
 		theTransfer.setAccount_from(results.getInt("account_from"));
 		

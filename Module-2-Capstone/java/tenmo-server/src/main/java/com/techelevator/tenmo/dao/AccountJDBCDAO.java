@@ -1,20 +1,26 @@
 package com.techelevator.tenmo.dao;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+
+@Component
 //might want to add some defensive programming here 
 public class AccountJDBCDAO implements AccountDAO {
 	
 	private JdbcTemplate jdbcTemplate;
 	
-	public AccountJDBCDAO(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = new JdbcTemplate();
+	public AccountJDBCDAO(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -30,14 +36,14 @@ public class AccountJDBCDAO implements AccountDAO {
 	}
 
 	@Override
-	public double getBalanceByUserId(int user_id) {
+	public double getBalanceByUserId(Long user_id) {
 		Account returnAccount = new Account();
 		
 		String sqlreturnAccount = "SELECT * " 
-								+ "FROM account "
+								+ "FROM accounts "
 								+ "WHERE user_id = ? ";
 		
-		SqlRowSet accountQuery = jdbcTemplate.queryForRowSet(sqlreturnAccount + user_id);
+		SqlRowSet accountQuery = jdbcTemplate.queryForRowSet(sqlreturnAccount, user_id);
 		
 		if(accountQuery.next()) {
 			returnAccount =  mapRowToAccount(accountQuery);
@@ -68,8 +74,12 @@ public class AccountJDBCDAO implements AccountDAO {
 	public void updateAccount(Account updatedAccount) {
 		String sqlUpdateAccount = "UPDATE accounts "
 				                + "SET balance = ? WHERE account_id = ?";	
-
+		
+		if (updatedAccount.getBalance() > 0) {
 		jdbcTemplate.update(sqlUpdateAccount, updatedAccount.getBalance(), updatedAccount.getAccount_id());
+		} else {
+			System.out.println("Insufficient Funds");
+		}
 		//we may want to change this to need a balance and an account
 
 	}

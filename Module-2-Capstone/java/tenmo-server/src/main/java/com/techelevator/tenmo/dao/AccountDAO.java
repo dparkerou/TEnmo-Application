@@ -10,7 +10,7 @@ public interface AccountDAO {
 	public void createAccount(Account newAccount);
 	
 	//Read 
-	public double getBalanceByUserId(int user_id);
+	public double getBalanceByUserId(Long user_id);
 	
 	public List <Account> listAccounts();
 	
