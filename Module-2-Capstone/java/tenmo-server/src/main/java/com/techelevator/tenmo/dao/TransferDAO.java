@@ -7,7 +7,7 @@ import com.techelevator.tenmo.model.Transfer;
 public interface TransferDAO {
 		
 		//Create
-		public void createTransfer(int account_from, int account_to, double amount);
+		public void sendTransfer(int account_from, int account_to, double amount);
 	
 		//Read
 		public List <Transfer> listTransfersByAccount(int account_from);

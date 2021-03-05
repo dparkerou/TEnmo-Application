@@ -17,12 +17,14 @@ public class TransferJDBCDAO implements TransferDAO {
 	
 	private JdbcTemplate jdbcTemplate;
 	
+	private AccountDAO accountDAO;
+	
 	public TransferJDBCDAO(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	@Override
-	public void createTransfer(int account_from, int account_to, double amount) {
+	public void sendTransfer(int account_from, int account_to, double amount) {
 		Transfer newTransfer = new Transfer();
 		String sqlNewTransfer ="INSERT INTO transfers "
 							  + "(transfer_id, transfer_type_id, transfer_status_id, "
@@ -38,7 +40,7 @@ public class TransferJDBCDAO implements TransferDAO {
 		
 		jdbcTemplate.update(sqlNewTransfer, newTransfer.getTransfer_id(), newTransfer.getTransfer_type_id(), newTransfer.getTransfer_status_id(),
 								newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
-
+		//link to accountDAO to add and subtract 
 	}
 	
 	@Override

@@ -68,19 +68,13 @@ public class ApiController {
 		return accountDAO.listAccounts();
 	}
 	
-	@RequestMapping( path = "/accounts", method = RequestMethod.POST) 
-	@ResponseStatus(value = HttpStatus.CREATED)
-	public void updateAccountBalance(@RequestBody Account updatedAccount) {
-		accountDAO.updateAccount(updatedAccount);
-	}
-
+	
 	@RequestMapping ( path = "/transfers/{from_id}/{to_id}/{amount}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createTransfer(@RequestBody@PathVariable int from_id, @PathVariable int to_id, @PathVariable double amount) {
-		transferDAO.createTransfer(from_id, to_id, amount);
+		transferDAO.sendTransfer(from_id, to_id, amount);
 		
 	}
-	
 	
 	@RequestMapping ( path = "/transfers", method = RequestMethod.GET) 
 	public List<Transfer> listTransfersByAccount(@RequestParam int account_from) {
@@ -91,14 +85,6 @@ public class ApiController {
 	public List<Transfer> listTransfersById(@PathVariable int id) {
 		return transferDAO.listTransfersById((long) id);
 	}
-	
-	//don't know if we need this
-	//@RequestMapping ( path = "/transfers/{id}/{transfer_status_id}", method = RequestMethod.POST)
-	//public void updateTransferStatus (@PathVariable Long transfer_id, @PathVariable int transfer_status_id) {
-		//transferDAO.updateTransferStatus(transfer_id, transfer_status_id);
-	//}
-	
-	
 	
 		 
 }

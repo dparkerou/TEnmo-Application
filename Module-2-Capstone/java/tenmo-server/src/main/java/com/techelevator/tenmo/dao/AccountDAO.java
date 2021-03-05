@@ -14,8 +14,12 @@ public interface AccountDAO {
 	
 	public List <Account> listAccounts();
 	
+	public Account getAccountById(int id);
+	
 	//Update 
-	public void updateAccount(Account updatedAccount);
+	public double addToBalance(double amount_to_add, int account_id);
+	
+	public double subtractFromBalance(double amount_to_sub, int account_id);
 	
 	//Delete 
 	public void deleteAccount(int account_id);

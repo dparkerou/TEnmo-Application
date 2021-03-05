@@ -86,8 +86,8 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		newService.sendBucks(5, 4, 500);
-		
+		//need to finish : System.out.println(newService.sendBucks(5, 4, 500));
+	
 	}
 
 	private void requestBucks() {

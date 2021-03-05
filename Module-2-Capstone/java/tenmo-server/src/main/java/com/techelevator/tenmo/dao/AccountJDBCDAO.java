@@ -53,6 +53,19 @@ public class AccountJDBCDAO implements AccountDAO {
 	}
 
 	@Override
+	public Account getAccountById(int account_id) {
+		Account newAccount = new Account();
+		String sqlGetAccount = "SELECT * "
+							 + "FROM accounts "
+							 + "WHERE account_id = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAccount, account_id);
+		if (results.next()) {
+			newAccount = mapRowToAccount(results);
+		}
+		return newAccount;
+	}
+	
+	@Override
 	public List<Account> listAccounts() {
 		List<Account> returnList = new ArrayList<Account>();
 		
@@ -71,19 +84,35 @@ public class AccountJDBCDAO implements AccountDAO {
 	}
 
 	@Override
-	public void updateAccount(Account updatedAccount) {
+	public double addToBalance(double amount_to_add, int account_id) {
+		
+		Account updateAccount = getAccountById(account_id);
+		
+		double newBalance = amount_to_add + updateAccount.getBalance();
+		
 		String sqlUpdateAccount = "UPDATE accounts "
 				                + "SET balance = ? WHERE account_id = ?";	
 		
-		if (updatedAccount.getBalance() > 0) {
-		jdbcTemplate.update(sqlUpdateAccount, updatedAccount.getBalance(), updatedAccount.getAccount_id());
-		} else {
-			System.out.println("Insufficient Funds");
-		}
-		//we may want to change this to need a balance and an account
-
+		jdbcTemplate.update(sqlUpdateAccount, newBalance, account_id);
+		
+		return newBalance;
 	}
 
+	@Override
+	public double subtractFromBalance(double amount_to_sub, int account_id) {
+		
+		Account updateAccount = getAccountById(account_id);
+		
+		double newBalance = updateAccount.getBalance() - amount_to_sub;
+		
+		String sqlUpdateAccount = "UPDATE accounts "
+                + "SET balance = ? WHERE account_id = ?";
+		
+		jdbcTemplate.update(sqlUpdateAccount, newBalance, account_id);
+		
+		return newBalance;
+	}
+	
 	@Override
 	public void deleteAccount(int account_id) {
 		String sqlDeleteAccount = "DELETE from accounts where account_id = ? ";
