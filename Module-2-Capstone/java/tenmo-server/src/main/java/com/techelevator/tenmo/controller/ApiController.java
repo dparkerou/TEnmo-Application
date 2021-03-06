@@ -69,7 +69,6 @@ public class ApiController {
 		return accountDAO.listAccounts();
 	}
 	
-	//Come back here and maybe re-work
 	@RequestMapping ( path = "/transfers/send", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void createTransfer(@RequestBody Transfer newTransfer, Principal userInfo) {
@@ -78,15 +77,15 @@ public class ApiController {
 		
 	}
 	
-	@RequestMapping ( path = "/transfers", method = RequestMethod.GET) 
-	public List<Transfer> listTransfersByAccount(@RequestParam int account_from) {
-		return transferDAO.listTransfersByAccount(account_from);
+	@RequestMapping ( path = "/accounts/transfers/{id}", method = RequestMethod.GET) 
+	public List<Transfer> listTransfersByAccount(@PathVariable int id) {
+		return transferDAO.listTransfersByAccount(id);
 	}
 	
-	@RequestMapping ( path = "/transfers/{id}", method = RequestMethod.GET) 
-	public List<Transfer> listTransfersById(@PathVariable int id) {
-		return transferDAO.listTransfersById((long) id);
-	}
+	//@RequestMapping ( path = "/transfers/{id}", method = RequestMethod.GET) 
+	//public List<Transfer> listTransfersById(@PathVariable int id) {
+		//return transferDAO.listTransfersById((long) id);
+	//}
 	
 		 
 }

@@ -2,6 +2,7 @@ package com.techelevator.tenmo;
 
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import com.techelevator.tenmo.models.AuthenticatedUser;
 import com.techelevator.tenmo.models.User;
@@ -75,13 +76,13 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private static Scanner userInput = new Scanner(System.in);
 	private void viewCurrentBalance() {
 										
-	System.out.println("Your current balance is: " + newService.getBalance(currentUser.getToken()));
+	System.out.println("Your current balance is: $" + String.format("%.2f",newService.getBalance(currentUser.getToken())));
 		
 	}
 
 	private void viewTransferHistory() {
 		
-		
+	newService.tranferList(currentUser.getToken(), currentUser.getUser().getId());
 		
 	}
 
@@ -91,25 +92,23 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-	System.out.println("Please enter the id of the user you'd like to send money to: ");	
+		
+	System.out.println("Please enter the ID of the user you'd like to send money to: ");
 	
-	Map<Integer, String> userList = newService.userList(currentUser.getToken());
+	User[] userList = newService.userList(currentUser.getToken());
 	
-	System.out.println(userList.get());
+	int userInput = console.getUserInputInteger("ID");
 	
-	int userChoice = Integer.parseInt(userInput.nextLine().trim());
-	console.getUserInput(prompt)
-//	if (userChoice != 0){
-//		userChoice
-//	}
+	int amount = console.getUserInputInteger("Enter the amount you'd like to send");
+	
+	newService.sendBucks(currentUser.getUser().getId(), userInput, amount, currentUser.getToken());
+	
 	}
-	//Choose form a list of users to send TE Bucks to
-	//newService.sendBucks(currentUser.getUser().getId(), 2, 40, currentUser.getToken());
 	 
 	//Print a line that has the UserIDs of the from and to users and amount of TE Bucks
 	
 	//Print "approved"
-	//}
+
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub

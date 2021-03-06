@@ -26,8 +26,10 @@ public class TenmoApplicationServices {
 	
 	  private final String BASE_URL = "http://localhost:8080";
 	  private final RestTemplate restTemplate = new RestTemplate();
+	  private final Console console = new Console();
 	  
 	  public TenmoApplicationServices() {
+		  
 	  }
 	  
 	  public double getBalance(String AUTH_TOKEN) {
@@ -44,7 +46,7 @@ public class TenmoApplicationServices {
 	  
 	  public void sendBucks(int account_from, int account_to, double amount, String AUTH_TOKEN) {
 		  Transfer newTransfer = new Transfer();
-			newTransfer.setAccount_to(account_to);
+			newTransfer.setAccount_to(c);
 			newTransfer.setAmount(amount);
 			try {
 			restTemplate.postForObject(BASE_URL + "/transfers/send", makeTransferEntity(newTransfer, AUTH_TOKEN), Transfer.class);
@@ -53,16 +55,36 @@ public class TenmoApplicationServices {
 			}
 	  }
 	  
-	  public Map<Integer,String> userList(String AUTH_TOKEN){
-		Map<Integer, String> userList = new HashMap<Integer, String>();
+	  public Transfer[] tranferList(String AUTH_TOKEN, int id) {
+
+		  Transfer [] transfers = null;
+		  try {
+		  transfers = restTemplate.exchange(BASE_URL  + "/accounts/transfers/" + id, HttpMethod.GET, makeAuthEntity(AUTH_TOKEN), Transfer[].class).getBody();
+		  } catch (RestClientResponseException ex) {
+		  System.out.print(ex.getRawStatusCode() + " : " + ex.getStatusText());
+		  }
+		  
+		  for (Transfer transfer : transfers) {
+			  Long trans_id = transfer.getTransfer_id();
+			  String type = transfer.getTransfer_type();
+			  int account_from = transfer.getAccount_from();
+			  int account_to = transfer.getAccount_to();
+			  double amount = transfer.getAmount();
+			  String status = transfer.getTransfer_status();
+			  System.out.println("ID: " + trans_id + " Type: " + type + " From: " + account_from + " To: " + account_to + " Amount: $"+ String.format("%.2f",amount) + " Status: "+ status);
+		  }
+		  return transfers;
+	  }
+	  
+	  public User[] userList(String AUTH_TOKEN) {
 		User[]users;
 		users = restTemplate.exchange(BASE_URL + "/users", HttpMethod.GET, makeAuthEntity(AUTH_TOKEN), User[].class).getBody();
 		for (User user : users) {
-			int userId = user.getId();
+			int id = user.getId();
 			String username = user.getUsername();
-			userList.put(userId, username);
+			System.out.println(id + " : " + username);
 		}
-		return userList;
+		return users;
 	  }
 		 
 	  private HttpEntity makeAuthEntity(String AUTH_TOKEN) {

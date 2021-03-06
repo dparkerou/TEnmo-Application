@@ -42,8 +42,10 @@ public class TransferJDBCDAO implements TransferDAO {
 		jdbcTemplate.update(sqlNewTransfer, newTransfer.getTransfer_id(), newTransfer.getTransfer_type_id(), newTransfer.getTransfer_status_id(),
 								newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
 		//link to accountDAO to add and subtract 
+	
 		accountDAO.addToBalance(amount, account_to);
 		accountDAO.subtractFromBalance(amount, account_from);
+		
 	}
 	
 	@Override
