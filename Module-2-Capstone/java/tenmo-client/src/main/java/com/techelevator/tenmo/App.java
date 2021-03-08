@@ -76,7 +76,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private static Scanner userInput = new Scanner(System.in);
 	private void viewCurrentBalance() {
 										
-	System.out.println("Your current balance is: $" + String.format("%.2f",newService.getBalance(currentUser.getToken())));
+	System.out.println("Your current account balance is: $" + String.format("%.2f",newService.getBalance(currentUser.getToken())));
 		
 	}
 
@@ -92,23 +92,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		
-	System.out.println("Please enter the ID of the user you'd like to send money to: ");
 	
-	User[] userList = newService.userList(currentUser.getToken());
-	
-	int userInput = console.getUserInputInteger("ID");
-	
-	int amount = console.getUserInputInteger("Enter the amount you'd like to send");
-	
-	newService.sendBucks(currentUser.getUser().getId(), userInput, amount, currentUser.getToken());
+	newService.sendBucks(currentUser.getUser().getId(), currentUser.getToken());
 	
 	}
-	 
-	//Print a line that has the UserIDs of the from and to users and amount of TE Bucks
-	
-	//Print "approved"
-
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub

@@ -52,7 +52,6 @@ public class TransferJDBCDAO implements TransferDAO {
 	public List<Transfer> listTransfersByAccount(int account_from) {
 		List<Transfer> returnList = new ArrayList<Transfer>();
 
-		
 		String sqlListTransfers = "SELECT * " 
 								+ "FROM transfers "
 								+ "INNER JOIN transfer_statuses "
@@ -71,7 +70,7 @@ public class TransferJDBCDAO implements TransferDAO {
 		
 		return returnList;
 	}
-
+	
 	@Override
 	public List<Transfer> listTransfersById(Long transfer_id) {
 		List<Transfer> returnList = new ArrayList<Transfer>();

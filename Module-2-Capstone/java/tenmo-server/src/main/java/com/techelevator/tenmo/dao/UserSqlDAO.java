@@ -77,6 +77,7 @@ public class UserSqlDAO implements UserDAO {
 
         return userCreated && accountCreated;
     }
+    
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

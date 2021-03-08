@@ -32,7 +32,7 @@ import com.techelevator.tenmo.model.User;
 ********************************************************************************************************/
 @RestController 
 //@RequestMapping("//localhost:8080")
-@PreAuthorize("isAuthenticated()")
+//@PreAuthorize("isAuthenticated()")
 
 public class ApiController {
 	private AccountDAO accountDAO;
@@ -52,10 +52,10 @@ public class ApiController {
         
     }
 	
-	@RequestMapping( path = "/users/", method = RequestMethod.GET)
-	public User findUserByUsername(@RequestParam String username) {
-		
-	    return userDAO.findByUsername(username);
+	@RequestMapping( path = "/users/username", method = RequestMethod.GET)
+	public User findIdByUsername(Principal userInfo) {
+		User newUser = userDAO.findByUsername(userInfo.getName());
+	    return userDAO.findByUsername(newUser.getUsername());
 	}
 	
 	@RequestMapping( path = "/accounts/balance", method = RequestMethod.GET)
@@ -78,14 +78,15 @@ public class ApiController {
 	}
 	
 	@RequestMapping ( path = "/accounts/transfers/{id}", method = RequestMethod.GET) 
-	public List<Transfer> listTransfersByAccount(@PathVariable int id) {
+	public List<Transfer> listTransfersByAccountFrom(@PathVariable int id) {
 		return transferDAO.listTransfersByAccount(id);
 	}
 	
-	//@RequestMapping ( path = "/transfers/{id}", method = RequestMethod.GET) 
-	//public List<Transfer> listTransfersById(@PathVariable int id) {
-		//return transferDAO.listTransfersById((long) id);
-	//}
+	@RequestMapping ( path = "/accounts/{id}", method = RequestMethod.GET) 
+	public Account getAccountById(Principal userInfo) {
+		int userId = userDAO.findIdByUsername(userInfo.getName());
+		return accountDAO.getAccountById(userId);
+	}
 	
 		 
 }
